@@ -1,0 +1,31 @@
+version: '3'
+services:
+  nllb200_app:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./nllb_api/Dockerfile
+    ports:
+      - "6060:6060"
+    container_name: 'nllb200-api'
+    tty: true
+    networks:
+      - translator-network
+  translation_app:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./translation_app/Dockerfile
+    ports:
+      - "5000:5000"
+    container_name: 'translation_app'
+    tty: true
+    volumes:
+      - ./translation_app:/app
+    depends_on:
+      - nllb200_app
+    networks:
+      - translator-network
+networks:
+  translator-network:
+    external: true
